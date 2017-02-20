@@ -1,91 +1,96 @@
-import React, { PropTypes } from 'react'
+import React, { Component } from 'react'
 import {BrowserRouter as Router, Route, Link, Redirect, withRouter} from 'react-router-dom'
 
+import Login from './Login'
+import {firebaseAuth} from './Firebase'
 import './index.css'
 
-const App = () => (
-  <Router>
-    <div>
-      <AuthButton/>
-      <ul>
-        <li><Link to="/public">Public Page</Link></li>
-        <li><Link to="/protected">Protected Page</Link></li>
-      </ul>
-      <Route path="/public" component={Public}/>
-      <Route path="/login" component={Login}/>
-      <PrivateRoute path="/protected" component={Protected}/>
-    </div>
-  </Router>
-)
+const Home = () => <h3 className='Home'>Home</h3>
+const Dashboard = () => <h3 className='Dashboard'>Super Secret Dashboard</h3>
 
-const fakeAuth = {
-  isAuthenticated: false,
-  authenticate(cb) {
-    this.isAuthenticated = true
-    setTimeout(cb, 100) // fake async
-  },
-  signout(cb) {
-    this.isAuthenticated = false
-    setTimeout(cb, 100)
-  }
+const ProtectedRoute = ({ component, authed, ...rest }) => {
+  return (
+    <Route {...rest} render={(props) => {
+      if (authed) {
+        return React.createElement(component, props)
+      } else {
+        return (
+          <Redirect to={{
+            pathname: '/login',
+            state: { from: props.location }
+          }} />
+        )
+      }
+    }
+  } />
+  )
 }
 
-const AuthButton = withRouter(({ push }) => (
-  fakeAuth.isAuthenticated ? (
-    <p>
-      Welcome! <button onClick={() => {
-        fakeAuth.signout(() => push('/'))
-      }}>Sign out</button>
-    </p>
-  ) : (
-    <p>You are not logged in.</p>
-  )
-))
-
-const PrivateRoute = ({ component, ...rest }) => (
-  <Route {...rest} render={props => (
-    fakeAuth.isAuthenticated ? (
-      React.createElement(component, props)
-    ) : (
-      <Redirect to={{
-        pathname: '/login',
-        state: { from: props.location }
-      }}/>
-    )
-  )}/>
-)
-
-const Public = () => <h3>Public</h3>
-const Protected = () => <h3>Protected</h3>
-
-class Login extends React.Component {
-  state = {
-    redirectToReferrer: false
+export default class App extends Component {
+  constructor () {
+    super()
+    this.state = {
+      authed: false,
+      loading: true
+    }
+    this.AuthComponent = this.AuthComponent.bind(this)
   }
 
-  login = () => {
-    fakeAuth.authenticate(() => {
-      this.setState({ redirectToReferrer: true })
+  componentDidMount () {
+    this.removeListener = firebaseAuth().onAuthStateChanged((user) => {
+      this.setState({
+        authed: user !== null,
+        loading: false
+      })
     })
   }
 
-  render() {
-    const { from } = this.props.location.state || { from: { pathname: '/' } }
-    const { redirectToReferrer } = this.state
-    
-    if (redirectToReferrer) {
-      return (
-        <Redirect to={from}/>
-      )
+  componentWillUnmount () {
+    this.removeListener()
+  }
+
+  AuthComponent () {
+    const Auth = withRouter(({ push }) => (
+        this.state.authed ? (
+          <p>
+            Welcome {firebaseAuth().currentUser.email}!
+              <button onClick={() => {
+                firebaseAuth().signOut()
+                push('/')
+              }}>Sign out</button>
+          </p>
+        ) : (
+          <p>You are not logged in.</p>
+        )
+      ))
+    return Auth
+  }
+
+  render () {
+    const {authed, loading} = this.state
+    if (loading) {
+      return <h3> Loading </h3>
     }
-    
+
+    const Auth = this.AuthComponent()
     return (
-      <div>
-        <p>You must log in to view the page at {from.pathname}</p>
-        <button onClick={this.login}>Log in</button>
-      </div>
+      <Router>
+        <div className='App'>
+          <div className='Header'>
+            <Auth />
+            <ul>
+              <li><Link to='/home'>Home (public)</Link></li>
+              <li><Link to='/dashboard'>Dashboard (protected)</Link></li>
+            </ul>
+          </div>
+          <div className='Content'>
+            <Route path='/home' component={Home} />
+            <Route path='/login' render={props => <Login authed={authed} {...props} />} />
+            <ProtectedRoute path='/dashboard' component={Dashboard} authed={authed} />
+          </div>
+        </div>
+      </Router>
     )
   }
 }
 
-export default App
