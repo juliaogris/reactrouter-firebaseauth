@@ -1,15 +1,3 @@
-// This is a React.JS app demostrating
-//  * authentication with Firebase
-//  * React Router for public and protected routes.
-//
-// Execute this file via:
-// $ npm install -g create-react-app
-// $ create-react-app sample-app
-// $ cd sample-app
-// $ npm install react-router-dom@next firebase --save
-// $ cp -f <this_file.js> src/App.js
-// $ npm start
-
 import React, { Component } from 'react'
 import {BrowserRouter as Router, Route, NavLink, Redirect} from 'react-router-dom'
 import firebase from 'firebase'

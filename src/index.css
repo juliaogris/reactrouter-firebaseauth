@@ -32,6 +32,12 @@ nav > button {
   background: none;
   color: #777777;
 }
+nav > button:hover {
+  color: #0288d1;
+}
+nav >  button:focus {
+  outline: 0;
+}
 a {
   line-height: 40px;
   display: inline-block;
