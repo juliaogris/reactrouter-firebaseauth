@@ -1,55 +1,83 @@
-html, body, p, .App, pre {
+body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  font-size: 100%;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-button {
-  cursor: pointer;
-}
-h3{
-  margin-top: 1em;
-  font-size: 1.5em;
-  text-align: center;
+h1 {
+  margin-top: 20vh;
+  color: #777777;
   width: 100%;
+  text-align: center;
 }
-pre {
+nav, .app {
+  width: 100%;
+  text-align: center;
+}
+nav {
+  border-bottom: 1px solid #e1e1e1;
+  font-size: 90%;
+  box-sizing: border-box;
+  height: 41px;
+}
+nav > button {
+  position: absolute;
+  padding: 0 1.5em 0;
+  top: 0;
+  right: 0;
+  border: none;
+  line-height: 40px;
+  background: none;
+  color: #777777;
+}
+a {
+  line-height: 40px;
   display: inline-block;
-  font-family: "Courier New", Courier, monospace;
+  text-decoration: none;
+  color: #777777;
 }
-
-.Header {
-  padding: 1.5em 2em .5em 2em;
-  border-bottom: 2px solid green;
-  background: lime;
-}
-.Header button {
-  position: relative;
-  bottom: .2em;
-  height: 2em;
-  font-size: 70%;
+a + a {
   margin-left: 1em;
 }
-
-.Login {
-  padding: 2em 2em 1em 2em;
+a:hover, .active {
+  color: #03a9f4;
 }
-.Login input {
+input {
   display: block;
   margin-top: 1em;
-  line-height: 1.8;
-  padding-left: .5em;
-  font-weight: normal;
+  padding: .6em;
+  border-radius: 2px;
+  border: 1px solid #e1e1e1;
+  color: #777777;
 }
-.Login input:focus {
+input:focus {
+  border: 1px solid #aaaaaa;
   outline: 0;
 }
-.Login button {
-  padding: .5em;
-  margin-right: 1em;
-  margin-top: 1.5em;
+.login {
+  padding-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.Login .Error {
-  color: red;
-  margin-bottom: 1em;
+.login button {
+  background: #03a9f4;
+  color: white;
+  font-size: 75%;
+  margin: 2em .7em 0 .7em;
+  padding: .5em;
+  width: 5em;
+  border: none;
+  border-radius: 4px;
+}
+.login button:hover {
+  background: #0288d1;
+}
+.error {
+  color: #d32f2f;
+  padding: 2em 20vw 0 20vw;
+  line-height: 1.4;
+  font-size: 90%;
 }
